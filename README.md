@@ -1,467 +1,192 @@
-[Amazon Reviews Scraper](https://apify.com/webdatalabs/amazon-reviews-scraper?fpr=data)
+[Amazon Reviews Scraper](https://apify.com/junipr/amazon-reviews-scraper?fpr=data)
 
-Extract Amazon customer reviews at scale for sentiment analysis, competitor research, and automation workflows. Get 10-15 reviews free (no cookies) or 1000+ reviews per product with authenticated cookies. API-ready JSON/CSV export for n8n, Zapier, Make.com, and AI/LLM analysis.
+# Amazon Reviews Scraper
 
-## 🚀 Key Features
+Extract Amazon product reviews at scale with full review data including ratings, review text, verified purchase status, helpful votes, reviewer info, and review images. Ideal for sentiment analysis, competitive research, brand monitoring, and market intelligence. Supports 12 Amazon marketplaces worldwide.
 
-- **Free Tier**: 10-15 reviews per product without authentication
-- **Unlimited Tier**: 1000+ reviews per product with Amazon cookies
-- **Advanced Filtering**: Filter by star rating, verified purchases, sort by recent/helpful
-- **Pay-Per-Event**: Only pay for reviews successfully scraped
-- **Automation-Ready**: JSON/CSV export for n8n, Zapier, Make.com, Google Sheets
-- **AI/LLM Optimized**: Clean structured data for sentiment analysis and training
-- **Reliable Extraction**: Optimized for consistent results
+## What can it do?
 
-## 📊 What Data You Get
+Amazon Reviews Scraper lets you extract structured review data from any Amazon product listing. Key capabilities:
 
-Optimized review data for sentiment analysis and automation:
+- **Complete review data** — Reviewer name, star rating, title, full review text, date, verified purchase status, helpful votes, and review images
+- **Advanced filtering** — Filter by star rating (1-5, positive, critical), date range, verified purchases only, or keyword search within reviews
+- **Batch ASIN input** — Scrape reviews for hundreds of products in a single run by providing a list of ASINs or product URLs
+- **Review image extraction** — Download URLs for all customer-uploaded images attached to reviews
+- **Multi-marketplace support** — amazon.com, .co.uk, .de, .fr, .it, .es, .ca, .com.au, .co.jp, .in, .com.br, .com.mx
+- **Sorted output** — Sort by most recent, most helpful, or top reviews
+- **Robust anti-bot handling** — Automatic session rotation, CAPTCHA detection, and residential proxy support
+- **Product context** — Each review row includes product name, price, overall rating, and total review count
 
-- **Review content**: Title, full text, and star rating (1-5)
-- **Authenticity**: Verified purchase badges
-- **Author**: Reviewer name for credibility
-- **Engagement**: Helpful votes (social proof)
-- **Product info**: ASIN and variant details (color, size, etc.)
-- **Timing**: Review date (ISO 8601 format)
+## What data can you extract from Amazon reviews?
 
-## 🎯 Use Cases
+| Field | Description |
+| --- | --- |
+| `asin` | Amazon Standard Identification Number |
+| `productName` | Product title |
+| `productUrl` | Direct link to the product page |
+| `productPrice` | Current listed price |
+| `productOverallRating` | Average star rating across all reviews |
+| `productTotalReviews` | Total number of ratings for the product |
+| `reviewId` | Unique Amazon review identifier |
+| `reviewUrl` | Direct link to the individual review |
+| `reviewerName` | Display name of the reviewer |
+| `reviewerProfileUrl` | Link to the reviewer's Amazon profile |
+| `rating` | Star rating given by the reviewer (1-5) |
+| `title` | Review headline |
+| `body` | Full review text |
+| `date` | Review date (YYYY-MM-DD) |
+| `dateIso` | Review date in ISO 8601 format |
+| `isVerifiedPurchase` | Whether the review is from a verified purchase |
+| `helpfulVotes` | Number of people who found the review helpful |
+| `images` | URLs of images uploaded by the reviewer |
+| `variant` | Product variant details (color, size, etc.) |
+| `countryReviewed` | Country the review was posted from |
+| `marketplace` | Amazon marketplace code (US, UK, DE, etc.) |
 
-### 1. **Sentiment Analysis**
+## How to use
 
-Extract customer opinions to analyze product strengths and weaknesses.
-
-### 2. **Competitor Research**
-
-Monitor competitor product reviews to identify market gaps and opportunities.
-
-### 3. **Product Development**
-
-Understand customer pain points and feature requests from real reviews.
-
-### 4. **Customer Support**
-
-Track negative reviews (1-2 stars) to proactively address customer issues.
-
-### 5. **Market Research**
-
-Analyze review trends across multiple products for market insights.
-
-## 📥 Input Configuration
-
-### Quick Mode (No Cookies - 10-15 reviews)
+1. **Scrape reviews by ASIN** — Provide one or more product ASINs:
 
 ```
 {
-  "productUrls": [
-    {
-      "url": "https://www.amazon.com/dp/B005EJH6Z4"
-    }
-  ],
-  "maxReviewsPerProduct": 15
-}
-```
-
-### Full Mode (With Cookies - Unlimited reviews)
-
-```
-{
-  "productUrls": [
-    {
-      "url": "https://www.amazon.com/dp/B005EJH6Z4"
-    }
-  ],
-  "maxReviewsPerProduct": 1000,
-  "amazonCookies": "[{\"name\":\"session-id\",\"value\":\"144-xxx\"},{\"name\":\"ubid-main\",\"value\":\"135-xxx\"}]",
+  "asins": ["B0D5CRCWXC", "B09V3KXJPB"],
+  "maxReviews": 200,
   "sortBy": "recent"
 }
 ```
 
-### Input Fields
-
-| Field | Type | Default | Description |
-| --- | --- | --- | --- |
-| `productUrls` | Array | **Required** | Amazon product URLs or ASINs (e.g., B005EJH6Z4) |
-| `maxReviewsPerProduct` | Integer | 100 | Without cookies: max 15. With cookies: up to 10,000 |
-| `amazonCookies` | String | null | **REQUIRED for 100+ reviews**. JSON array of cookies from logged-in Amazon session (see below) |
-| `starRatings` | Array | [1,2,3,4,5] | Filter by star ratings (e.g., ["1", "2"] for negative reviews) |
-| `verifiedOnly` | Boolean | false | Only scrape verified purchase reviews |
-| `sortBy` | String | "all" | Sort reviews: `recent`, `helpful`, or `all` |
-
-## 🍪 How to Get Amazon Cookies (For Unlimited Reviews)
-
-**Note**: Amazon requires authentication to access the reviews page with pagination. Without cookies, you can only get 10-15 inline reviews per product.
-
-### How to Export Cookies:
-
-1. **Open Amazon.com** in Google Chrome and log in
-2. **Install a cookie export extension** like "EditThisCookie" or "Cookie-Editor"
-3. **Export cookies as JSON** and paste into the `amazonCookies` input field
-
-The cookies should be in JSON array format with `name`, `value`, and `domain` fields for each cookie.
-
-## 📤 Output Schema
-
-Minimal, clean schema optimized for sentiment analysis:
+1. **Filter negative reviews** — Get only critical reviews for competitive analysis:
 
 ```
 {
-  "productAsin": "B005EJH6Z4",
-  "rating": 5,
-  "title": "Great product, highly recommend!",
-  "text": "I've been using this for 3 months and it works perfectly. The buttons are easy to press and it scrolls quickly...",
-  "verifiedPurchase": true,
-  "authorName": "John D.",
-  "reviewDate": "2025-01-10T00:00:00.000Z",
-  "helpfulVotes": 12,
-  "variant": "Color: Black | Size: Large"
+  "asins": ["B0D5CRCWXC"],
+  "filterRating": "critical",
+  "filterVerified": true,
+  "maxReviews": 500
 }
 ```
 
-### Output Fields
-
-| Field | Type | Description | Example |
-| --- | --- | --- | --- |
-| `productAsin` | string | Amazon product identifier | `"B005EJH6Z4"` |
-| `rating` | integer | Star rating (1-5) | `5` |
-| `title` | string | Review headline | `"Great product!"` |
-| `text` | string | Full review body | `"I've been using this..."` |
-| `verifiedPurchase` | boolean | Is verified purchase | `true` |
-| `authorName` | string | Reviewer name | `"John D."` |
-| `reviewDate` | string | ISO 8601 date | `"2025-01-10T00:00:00.000Z"` |
-| `helpfulVotes` | integer | Helpful vote count | `12` |
-| `variant` | string/null | Product variant | `"Color: Black"` |
-
-**Why This Schema?**
-Based on research of 100+ sentiment analysis workflows, we removed 7 unnecessary fields (reviewId, productUrl, authorProfileUrl, totalVotes, images, scraped_at) to create a **lean, focused dataset** that's perfect for:
-
-- AI/LLM sentiment analysis
-- Automation workflows (n8n, Zapier, Make)
-- Data analysis (Python, R, Excel)
-- Dashboard visualizations
-
-## 🔧 Advanced Features
-
-### Bypass 100-Review Pagination Limit
-
-Amazon limits pagination to 10 pages × 10 reviews = 100 reviews max per query. This scraper bypasses that limit by filtering reviews by star rating:
-
-- Set `starRatings: [1, 2, 3, 4, 5]` (default)
-- Set `maxReviewsPerProduct: 500`
-- Scraper fetches up to 100 reviews per star rating = 500 total
-
-**Example**: Scrape 500 reviews for a popular product
+1. **Search within reviews** — Find reviews mentioning specific topics:
 
 ```
 {
-  "productUrls": [{"url": "https://www.amazon.com/dp/B08N5WRWNW"}],
-  "maxReviewsPerProduct": 500,
-  "starRatings": [1, 2, 3, 4, 5]
+  "asins": ["B0D5CRCWXC"],
+  "searchKeyword": "battery life",
+  "maxReviews": 100
 }
 ```
 
-### Filter by Star Rating
-
-Focus on specific review types:
-
-**Negative reviews only** (customer support monitoring):
+1. **International marketplace** — Scrape reviews from Amazon UK:
 
 ```
 {
-  "starRatings": [1, 2],
-  "maxReviewsPerProduct": 100
+  "asins": ["B0D5CRCWXC"],
+  "marketplace": "UK",
+  "maxReviews": 50
 }
 ```
 
-**Positive reviews only** (marketing testimonials):
+## Pricing
+
+This actor uses pay-per-event pricing at **$3.90 per 1,000 reviews** ($0.0039 per review). You only pay for successfully extracted reviews — blocked requests, empty products, failed pages, and duplicate reviews are never charged.
+
+Pricing includes all platform compute costs — no hidden fees.
+
+**Cost examples:**
+
+- 100 reviews for one product: $0.25
+- 1,000 reviews across 10 products: $2.50
+- 5,000 reviews for market research: $12.50
+
+This is 10x cheaper than enterprise alternatives like Bright Data or Oxylabs, which start at $500+/month for Amazon data.
+
+## Proxy Requirements
+
+This actor requires residential proxies because Amazon aggressively blocks datacenter IP addresses on review pages.
+
+- **Paid Apify plan users**: Works automatically with the default residential proxy configuration.
+- **Free plan users**: Provide your own residential proxy URL in the Proxy Configuration input field.
+- Without a residential proxy, the actor will exit with a clear error message.
+
+## Input and Output examples
+
+**Input:**
 
 ```
 {
-  "starRatings": [4, 5],
-  "maxReviewsPerProduct": 100
-}
-```
-
-### Verified Purchases Only
-
-Get authentic customer feedback:
-
-```
-{
-  "verifiedOnly": true
-}
-```
-
-### Sort by Most Helpful
-
-Get high-quality reviews first:
-
-```
-{
-  "sortBy": "helpful",
-  "maxReviewsPerProduct": 50
-}
-```
-
-## 🔄 Automation Workflows
-
-### n8n Workflow Examples
-
-#### 1. **Product Research Workflow**
-
-```
-┌─────────────────────┐
-│ Manual Trigger      │
-│ Paste 10 competitor │
-│ product URLs        │
-└──────────┬──────────┘
-           │
-           ▼
-┌─────────────────────┐
-│ Apify: Amazon       │
-│ Reviews Scraper     │
-│ Get 50 reviews each │
-│ (500 total)         │
-└──────────┬──────────┘
-           │
-           ▼
-┌─────────────────────┐
-│ ChatGPT Node        │
-│ Analyze common      │
-│ complaints          │
-└──────────┬──────────┘
-           │
-           ▼
-┌─────────────────────┐
-│ Notion Database     │
-│ Save insights       │
-└─────────────────────┘
-```
-
-**Configuration**:
-
-```
-{
-  "productUrls": [
-    {"url": "https://www.amazon.com/dp/COMPETITOR1"},
-    {"url": "https://www.amazon.com/dp/COMPETITOR2"}
-  ],
-  "maxReviewsPerProduct": 50,
-  "sortBy": "helpful"
-}
-```
-
-#### 2. **Review Monitoring Workflow**
-
-```
-┌─────────────────────┐
-│ Cron Trigger        │
-│ Daily at 9am        │
-└──────────┬──────────┘
-           │
-           ▼
-┌─────────────────────┐
-│ Apify: Amazon       │
-│ Reviews Scraper     │
-│ Get latest 20       │
-│ reviews             │
-└──────────┬──────────┘
-           │
-           ▼
-┌─────────────────────┐
-│ Filter Node         │
-│ Rating ≤ 2 stars    │
-│ (negative reviews)  │
-└──────────┬──────────┘
-           │
-           ▼
-┌─────────────────────┐
-│ Sentiment Analysis  │
-│ Extract issue       │
-└──────────┬──────────┘
-           │
-           ▼
-┌─────────────────────┐
-│ Slack Alert         │
-│ Notify customer     │
-│ support team        │
-└─────────────────────┘
-```
-
-**Configuration**:
-
-```
-{
-  "productUrls": [
-    {"url": "https://www.amazon.com/dp/YOUR_PRODUCT"}
-  ],
-  "maxReviewsPerProduct": 20,
+  "asins": ["B0D5CRCWXC"],
+  "maxReviews": 50,
+  "filterRating": "all",
   "sortBy": "recent",
-  "starRatings": [1, 2]
+  "includeImages": true,
+  "includeProductInfo": true
 }
 ```
 
-#### 3. **Competitor Price Drop Alert**
+**Output (single review):**
 
 ```
-┌─────────────────────┐
-│ Webhook Trigger     │
-│ Price drop detected │
-└──────────┬──────────┘
-           │
-           ▼
-┌─────────────────────┐
-│ Apify: Scrape       │
-│ Reviews (recent)    │
-│ Check sentiment     │
-└──────────┬──────────┘
-           │
-           ▼
-┌─────────────────────┐
-│ Decision Node       │
-│ High positive       │
-│ sentiment?          │
-└──────────┬──────────┘
-           │
-           ▼
-┌─────────────────────┐
-│ Email Alert         │
-│ "Competitor launched│
-│ price drop + good   │
-│ reviews"            │
-└─────────────────────┘
+{
+  "asin": "B0D5CRCWXC",
+  "productName": "Apple AirPods Pro (2nd Generation)",
+  "productUrl": "https://www.amazon.com/dp/B0D5CRCWXC",
+  "productPrice": "$249.00",
+  "productOverallRating": 4.7,
+  "productTotalReviews": 85432,
+  "reviewId": "R3ABC123DEF456",
+  "reviewUrl": "https://www.amazon.com/gp/customer-reviews/R3ABC123DEF456",
+  "reviewerName": "John D.",
+  "reviewerProfileUrl": "https://www.amazon.com/gp/profile/amzn1.account.ABC123",
+  "rating": 5,
+  "title": "Best noise cancelling earbuds I've owned",
+  "body": "I've been using these for two months now and the noise cancellation is incredible...",
+  "date": "2026-02-15",
+  "dateIso": "2026-02-15T00:00:00.000Z",
+  "isVerifiedPurchase": true,
+  "helpfulVotes": 42,
+  "images": [
+    "https://images-na.ssl-images-amazon.com/images/I/abc123.jpg"
+  ],
+  "variant": "Color: White, Size: One Size",
+  "countryReviewed": "Reviewed in the United States",
+  "marketplace": "US",
+  "scrapedAt": "2026-03-11T12:00:00.000Z"
+}
 ```
 
-### Zapier Integration
+## Related scrapers by Junipr
 
-**Trigger**: Schedule (Daily)
-**Action**: Apify - Run Actor
-**Filter**: Rating ≤ 2
-**Action**: Send to Slack/Email
+- [Yelp Business Scraper](https://apify.com/junipr/yelp-scraper) — Extract business data, reviews, hours, menus, and photos from Yelp
+- [Google News Scraper](https://apify.com/junipr/google-news-scraper) — Scrape Google News articles by topic or keyword
+- [Contact Info Scraper](https://apify.com/junipr/contact-info-scraper) — Extract emails, phones, and social links from any website
+- [Trustpilot Reviews Scraper](https://apify.com/junipr/trustpilot-reviews-scraper) — Scrape Trustpilot business reviews
 
-### Make.com Integration
+## FAQ
 
-Use Apify module → Select "amazon-reviews-scraper" → Configure input → Connect to next module
+### How much does it cost to scrape Amazon reviews?
 
-## 💰 Pricing
+The actor charges $3.90 per 1,000 reviews extracted. You only pay for successful extractions — blocked requests, empty products, and duplicate reviews are free. A typical run of 100 reviews for one product costs about $0.39.
 
-**Pay-Per-Event Model**: Only pay for reviews you collect
+### Can I scrape reviews from international Amazon sites?
 
-This actor uses pay-per-event pricing. You are only charged for reviews successfully scraped. See current pricing in the Apify Console when starting a run.
+Yes. The actor supports 12 Amazon marketplaces: US, UK, Germany, France, Italy, Spain, Canada, Australia, Japan, India, Brazil, and Mexico. Set the `marketplace` input parameter to the desired country code (e.g., "UK", "DE", "JP").
 
-**No Hidden Fees**: Only charged for successfully scraped reviews.
+### How do I filter only negative reviews?
 
-## ⚡ Performance
+Set `filterRating` to `"critical"` to get only 1-3 star reviews, or use a specific star number like `"1"` or `"2"`. Combine with `filterVerified: true` to focus on verified purchase complaints for competitive intelligence.
 
-- **Speed**: <10 seconds for 100 reviews
-- **Reliability**: 99%+ success rate
-- **Scalability**: Handle 500 reviews/product via star-rating filters
-- **Reliable**: Residential proxies for consistent results
+### Does it extract review images?
 
-## 📝 Limitations & Best Practices
+Yes. When `includeImages` is set to `true` (the default), the actor extracts URLs for all customer-uploaded photos attached to reviews. Image URLs point to high-resolution versions on Amazon's CDN.
 
-### Limitations
+### Can I scrape reviews for multiple products at once?
 
-1. Amazon may show CAPTCHA for excessive requests (rate limiting helps)
-2. Some reviews may be hidden behind "See more" buttons (handled automatically)
-3. Maximum 500 reviews per product (using star-rating filters)
-4. Only supports Amazon.com (US) marketplace
+Yes. Provide multiple ASINs in the `asins` array or multiple product URLs in the `productUrls` array. The actor processes them sequentially with delays between products to avoid detection. You can scrape up to 500 products in a single run.
 
-### Best Practices
+### Is the data structured for sentiment analysis?
 
-1. **Use residential proxies**: Required for production runs
-2. **Set reasonable delays**: 3-5 seconds between requests (default: 3000ms)
-3. **Start small**: Test with 1-2 products before scaling
-4. **Monitor errors**: Check logs for CAPTCHA or rate limiting issues
-5. **Respect Amazon's ToS**: Use for legitimate research purposes only
+Yes. Each review is output as a structured JSON object with separate fields for rating, title, body text, date, and verified purchase status. This format is ready for direct import into NLP pipelines, pandas DataFrames, or sentiment analysis tools without additional parsing.
 
-## 🔐 Legal & Compliance
+### Why do I need a residential proxy?
 
-- Scraping publicly available review data
-- Respects robots.txt and rate limiting
-- No login or authentication bypass
-- Use responsibly and in accordance with Amazon's Terms of Service
-
-## 📧 Support
-
-- **Email**: via Apify
-- **Issues**: Report bugs via Apify Console
-- **Custom Development**: Available for enterprise customers
-
-## 🚀 Getting Started
-
-1. **Configure Input**: Add product URLs or ASINs
-2. **Set Filters**: Choose star ratings, max reviews, etc.
-3. **Run Actor**: Click "Start" in Apify Console
-4. **Download Results**: Export as JSON, CSV, or connect to your workflow
-
-**Pro Tip**: Use `starRatings: [1, 2, 3, 4, 5]` and `maxReviewsPerProduct: 500` to collect maximum reviews per product.
-
----
-
-## 🔗 Explore More of Our Actors
-
-### 🛒 E-commerce
-
-| Actor | Description |
-| --- | --- |
-| [Shopify Scraper Pro](https://apify.com/webdatalabs/shopify-scraper-pro) | Extract complete Shopify product data with variants and sales estimates |
-| [eBay Scraper (PPR)](https://apify.com/webdatalabs/ebay-scraper-pro) | Extract eBay products with seller analytics and engagement metrics |
-| [Etsy Scraper Pro](https://apify.com/webdatalabs/etsy-scraper-pro) | Fast Etsy product scraper with ratings, reviews, and shop data |
-| [Amazon Bestsellers Tracker](https://apify.com/webdatalabs/amazon-bestsellers-tracker) | Monitor Amazon bestseller rankings and track trending products |
-| [TikTok Shop Scraper](https://apify.com/webdatalabs/tiktok-shop-scraper) | Extract TikTok Shop products with sales metrics and reviews |
-
-### 💬 Social Media & Community
-
-| Actor | Description |
-| --- | --- |
-| [Reddit Scraper Pro](https://apify.com/webdatalabs/reddit-scraper-pro) | Monitor subreddits and track keywords with sentiment analysis |
-| [Discord Scraper Pro](https://apify.com/webdatalabs/discord-scraper-pro) | Extract Discord messages and chat history for community insights |
-| [YouTube Comments Harvester](https://apify.com/webdatalabs/youtube-comments-harvester) | Comprehensive YouTube comments scraper with channel-wide enumeration |
-| [YouTube Contact Scraper](https://apify.com/webdatalabs/youtube-contact-scraper) | Extract YouTube channel contact information for outreach |
-| [YouTube Shorts Scraper](https://apify.com/webdatalabs/youtube-shorts-scraper) | Scrape YouTube Shorts for viral content research |
-
-### 🏢 Business Intelligence
-
-| Actor | Description |
-| --- | --- |
-| [Indeed Salary Analyzer](https://apify.com/webdatalabs/indeed-salary-analyzer) | Get salary data for compensation benchmarking and HR analytics |
-| [Crunchbase Scraper](https://apify.com/webdatalabs/crunchbase-scraper) | Extract company data and funding information for business intelligence |
-| [Northdata Scraper](https://apify.com/webdatalabs/northdata-scraper) | Extract German company data from Northdata for business research |
-| [Shopify Store Intelligence](https://apify.com/webdatalabs/shopify-store-intelligence) | Analyze Shopify stores for competitive intelligence and market research |
-| [Apify Store Radar](https://apify.com/webdatalabs/apify-store-radar) | Monitor Apify Store actors for market intelligence |
-
----
-
----
-
-**Built with ❤️ by WebDataLabs**
-
----
-
-## 📬 Custom Solutions & Enterprise
-
-Need a custom data feed, modified output format, or enterprise integration?
-
-**Contact:** [Furkanc58@gmail.com](mailto:Furkanc58@gmail.com)
-
-I offer:
-
-- Daily/weekly data feeds (Snowflake, S3, BigQuery, Google Sheets)
-- Custom scrapers for platforms not yet covered
-- White-label solutions for agencies
-- Priority support and SLAs
-
-*Response within 24-48 hours.*
-
-## Legal Disclaimer
-
-This actor is a general-purpose tool for analyzing publicly accessible web data. The user bears sole responsibility for ensuring their specific use complies with:
-
-- Applicable laws (GDPR/DSGVO, copyright law)
-- The target website's Terms of Service
-- Apify's Terms of Service
-
-The provider (webdatalabs) expressly disclaims liability for any unauthorized or unlawful use. By using this actor, the user agrees to indemnify the provider against any third-party claims arising from their use of the data.
-
----
-
-*This tool is not affiliated with Amazon. All trademarks belong to their respective owners.*
+Amazon uses aggressive anti-bot protection on review pages including IP reputation scoring, browser fingerprint validation, and CAPTCHA challenges. Datacenter IPs are blocked immediately. Residential proxies route traffic through real ISP addresses, which Amazon treats as legitimate browser traffic. Paid Apify plans include residential proxy access automatically.
