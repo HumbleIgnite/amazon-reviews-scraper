@@ -1,79 +1,98 @@
-[Amazon Reviews Scraper](https://apify.com/rastriq/amazon-reviews-scraper?fpr=data)
+[Amazon Reviews Scraper](https://apify.com/saswave/amazon-reviews-scraper?fpr=data)
 
-# Amazon Products & Reviews Scraper
+## 🛒 Amazon Reviews Scraper
 
-Collect customer reviews and product data from Amazon across all major marketplaces — ES, US, DE, FR, UK, IT, BR, MX, CA, AU, JP, and more.
+Extract Verified & Public Customer Reviews from Amazon Products
 
-## What you can do with it
+The Amazon Reviews Scraper allows you to collect customer reviews directly from Amazon product pages using the ASIN.
 
-- Monitor how customer sentiment evolves for your products or your competitors' over time
-- Analyse reviews before entering a new market or launching a new product category
-- Track rating drops that signal supply issues, quality problems, or negative PR
-- Build datasets for sentiment analysis, voice-of-customer research, or AI training
-- Compare product availability and pricing across multiple European or global marketplaces
-- Identify weak spots in competing products by mining low-rated reviews at scale
+It extracts review content, ratings, reviewer profiles, purchase status, and timestamps in a clean, structured JSON format.
 
-## Filters
+Perfect for product research, sentiment analysis, brand monitoring, and competitive intelligence.
 
-| Filter | What it does |
-| --- | --- |
-| Products (ASINs or URLs) | The list of Amazon products you want to collect data for |
-| Mode | Choose what to collect: reviews only, product data only, or both together |
-| Marketplace | Select the Amazon country store to query (e.g. amazon.es, amazon.de) |
-| Max Reviews per Product | Cap how many reviews to collect per product |
-| Cookies | Your Amazon session cookies — required once to unlock review access (see setup below) |
+## How to extract cookies from your browser
 
-## What you get
+![Screenshot cookies extraction](https://images.apifyusercontent.com/6V1S8wRVI1tOTLRBo-464gj-cL3a8rq5fLxKnMCgxiM/w:1800/cb:1/aHR0cHM6Ly9yYXcuZ2l0aHVidXNlcmNvbnRlbnQuY29tL2RldnNhc3dhdmUvYXNzZXRzLXNhc3dhdmUvcmVmcy9oZWFkcy9tYWluL0Fwb2xsb19jb3B5X2Nvb2tpZXMucG5n.webp)
 
-**Review records include:**
+- install EditThisCookie chrome extension
+- login to your account and go to your amazon home page
+- Use the extension and click "export"
+- Paste the cookies in the input "cookies" from the actor
 
-| Field | What it contains |
-| --- | --- |
-| review_id | Unique identifier for the review |
-| author | Reviewer display name |
-| country | Country where the review was posted |
-| rating | Star rating (1 to 5) |
-| date | Date the review was published |
-| title | Review headline |
-| body | Full review text |
-| verified_purchase | Whether Amazon confirmed the reviewer bought the product |
-| helpful_votes | Number of people who marked the review as helpful |
-| variant | Product variant the reviewer purchased (colour, size, etc.) |
+The apify documentation has a tutorial on how to do it with screenshots, [https://docs.apify.com/tutorials/log-in-by-transferring-cookies#export-your-cookies](https://docs.apify.com/tutorials/log-in-by-transferring-cookies#export-your-cookies) go to the export your cookies section
 
-**Product records include:**
+## ⭐ Key Features
 
-| Field | What it contains |
-| --- | --- |
-| title | Product name |
-| brand | Brand name |
-| price | Current price including currency |
-| rating | Average star rating |
-| review_count | Total number of ratings on the product |
-| availability | Stock status |
-| category | Product category breadcrumb |
-| bullets | Key feature bullet points from the product page |
-| description | Full product description |
-| specs | Detailed technical attributes (e.g. dimensions, materials) |
-| main_image | Link to the main product photo |
-| variants | Available colour or size options |
-| url | Direct link to the product on Amazon |
+🔍 Scrape public Amazon customer reviews by ASIN
 
-## Cookie setup (one-time, 2 minutes)
+⭐ Extract ratings, titles, and full review text
 
-Amazon requires an active login session to access reviews. You only need to do this once — after the first successful run, your session is saved automatically for all future runs.
+🧾 Identify verified vs non-verified purchases
 
-1. Log into your Amazon account in Chrome on the marketplace you want to use (e.g. amazon.es)
-2. Install the free Cookie-Editor browser extension
-3. While on the Amazon page, open Cookie-Editor and click Export
-4. Copy the exported cookies and paste them into the Cookies field in the actor input
-5. Run the actor — your session is now saved and you will not need to repeat this
+👤 Collect reviewer name, profile link & avatar
 
-If reviews stop loading after a few weeks, your session has expired. Simply export fresh cookies and paste them in again.
+🌍 Supports multiple Amazon marketplaces (FR, US, DE, UK, etc.)
 
-## Pricing
+🕒 Capture localized review dates
 
-**$5.00 per 1,000 results. First 500 results free.**
+🔗 Direct review & reviewer profile URLs
 
-## Legal
+📦 Clean JSON output, ready for databases or AI pipelines
 
-This actor collects publicly available information from Amazon's website. Use responsibly and in accordance with Amazon's Terms of Service and applicable data protection laws.
+⚡ Designed for automation & large-scale scraping
+
+## 📦 Output example
+
+```
+{
+  "asin": "B0FMYPQQVX",
+  "id": "RBWPQE0D6DUOB",
+  "link": "https://www.amazon.fr/gp/customer-reviews/RBWPQE0D6DUOB/ref=cm_cr_getr_d_rvw_ttl",
+  "title": "Très bonne protection",
+  "rating": "5,0",
+  "date": "Commenté en France le 22 décembre 2025",
+  "content": [
+    "Parfait, protège très bien l'écran et s'adapte parfaitement."
+  ],
+  "verified_purchase": false,
+  "reviewer_link": "https://www.amazon.fr/gp/profile/amzn1.account.AF5IJFUJA43RT2JHTZQ6QTSO2H6A/ref=cm_cr_getr_d_gw_btm",
+  "reviewer_avatar": "https://images-na.ssl-images-amazon.com/images/G/01/x-locale/common/grey-pixel.gif",
+  "reviewer_name": "Isabelle"
+}
+```
+
+## 📌 Use Cases
+
+🧠 Sentiment analysis & NLP training
+
+📊 Product quality & satisfaction monitoring
+
+🛍️ E-commerce competitor research
+
+⭐ Rating & reputation tracking
+
+📉 Detect negative review spikes
+
+🧪 Market validation before product launch
+
+🤖 AI review summarization & insights
+
+🧾 Build review databases for BI tools
+
+## Notes
+
+Only publicly available reviews are collected
+
+Amazon limits reviews results to 10 page or 100 reviews
+
+Verified purchase flag depends on Amazon availability
+
+Review language & date format follow local marketplace
+
+## 🛟 SUPPORT
+
+Share your runs with the developer team and create issues on error to help us improve actor quality.
+
+You might discover edge case we didn't test yet
+
+We stay available anytime
