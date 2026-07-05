@@ -1,171 +1,45 @@
-[Amazon Reviews Scraper](https://apify.com/sovereigntaylor/amazon-reviews-scraper?fpr=data)
+[Amazon Reviews Scraper](https://apify.com/oza-dev/amazon-reviews-scraper?fpr=data)
 
-# Amazon Product Reviews Scraper
+# 🌟 Amazon Reviews Scraper: Ultimate Customer Feedback & Sentiment Analysis Tool
 
-Extract Amazon product reviews at scale. Scrape full review text, star ratings, verified purchase status, helpful vote counts, reviewer profiles, review images, and rating breakdowns for any product by URL or ASIN.
+Unlock the power of customer voice with the most efficient **Amazon Reviews Scraper**. Extract thousands of reviews, ratings, and user-generated images to fuel your market research, sentiment analysis, and product development.
 
-## Features
+## 🚀 Why Choose This Amazon Reviews Scraper?
 
-- Scrape reviews by product URL or ASIN
-- Extract full review text, title, rating, date
-- Verified purchase identification
-- Helpful vote counts
-- Review images extraction
-- Reviewer name and profile link
-- Product-level rating breakdown (5-star to 1-star percentages)
-- Overall product rating and total review count
-- Filter by star rating (all, positive, critical, or specific stars)
-- Sort by most recent or most helpful
-- Support for 11 Amazon marketplaces worldwide
-- Automatic pagination — scrape hundreds or thousands of reviews
-- CAPTCHA and bot detection with retry logic
-- Clean, structured JSON output
+- **Deep Sentiment Analysis**: Get full review text and titles, perfect for NLP and opinion mining.
+- **Verified Purchase Filtering**: Focus on authentic feedback by identifying verified buyers.
+- **Rich Media Extraction**: Download user-uploaded images to see products in real-world conditions.
+- **Global Reach**: Works across all Amazon domains (US, UK, DE, FR, etc.) with proxy support.
+- **GDPR Compliant**: Toggle personal data (reviewer names) on or off based on your needs.
 
-## Input
+## 📊 Comprehensive Data Output
 
-| Field | Type | Default | Description |
-| --- | --- | --- | --- |
-| productUrls | array | [] | Amazon product URLs to scrape reviews from |
-| asins | array | [] | ASINs to scrape reviews for (uses default marketplace) |
-| maxReviews | number | 500 | Max reviews per product (0 = unlimited) |
-| sortBy | string | "recent" | Sort: "recent" or "helpful" |
-| filterByRating | string | "all" | Filter: all, positive, critical, five_star, four_star, three_star, two_star, one_star |
-| verifiedOnly | boolean | false | Only scrape verified purchase reviews |
-| marketplace | string | "amazon.com" | Default marketplace for ASIN lookups |
-| includeProductInfo | boolean | true | Include product-level rating breakdown |
-| includeReviewerProfile | boolean | true | Include reviewer name and profile link |
-| proxyConfiguration | object | Apify Residential | Proxy settings (residential strongly recommended) |
+Our scraper provides a rich dataset for every review:
 
-## Output — Individual Review
+- **Review Content**: Title, full text, and rating score (1-5 stars).
+- **Metadata**: Date of review, location, and helpfulness votes.
+- **Product Context**: ASIN, product variant (size, color), and verified status.
+- **Visuals**: Links to all images attached by reviewers.
 
-```
-{
-  "productTitle": "Sony WH-1000XM5 Wireless Noise Canceling Headphones",
-  "asin": "B0BX2L8PBS",
-  "reviewId": "R3EXAMPLE123",
-  "reviewTitle": "Best noise canceling headphones I've ever owned",
-  "reviewText": "I've tried Bose, Apple, and Sennheiser — nothing comes close to the XM5. The noise canceling is incredible on flights, and the sound quality is warm and detailed...",
-  "rating": 5,
-  "author": "AudioEnthusiast",
-  "authorProfileUrl": "https://www.amazon.com/gp/profile/amzn1.account.EXAMPLE",
-  "date": "2025-12-15",
-  "dateRaw": "Reviewed in the United States on December 15, 2025",
-  "verified": true,
-  "helpful": 42,
-  "images": [
-    "https://m.media-amazon.com/images/I/review-image-1.jpg"
-  ],
-  "variant": "Color: Black",
-  "marketplace": "amazon.com",
-  "overallRating": 4.7,
-  "totalReviews": 15234,
-  "ratingBreakdown": {
-    "5": "72%",
-    "4": "14%",
-    "3": "6%",
-    "2": "4%",
-    "1": "4%"
-  },
-  "scrapedAt": "2026-03-02T12:00:00.000Z"
-}
-```
+## 🛠 How It Works
 
-## Use Cases
+1. **Input**: Paste the Amazon product URLs you want to analyze.
+2. **Customize**: Set the maximum number of reviews and choose your proxy settings.
+3. **Run**: The scraper navigates through pages, handling pagination automatically.
+4. **Export**: Get your data in **JSON, CSV, Excel, or XML** instantly.
 
-- **Sentiment Analysis**: Analyze customer sentiment at scale across products
-- **Product Research**: Understand what customers love and hate before sourcing
-- **Competitor Intelligence**: Monitor competitor product feedback trends
-- **Brand Monitoring**: Track reviews for your own products over time
-- **Quality Control**: Detect emerging quality issues from negative review spikes
-- **Market Research**: Identify unmet customer needs and feature gaps
-- **Review Aggregation**: Build review databases for analytics platforms
-- **Content Analysis**: Extract real customer language for marketing copy
+## 💡 Business Use Cases
 
-## Pricing
+- **Competitor Benchmarking**: Analyze what customers love or hate about competing products.
+- **Product Improvement**: Identify recurring issues or requested features from real users.
+- **Brand Reputation**: Monitor sentiment trends over time to manage your brand image.
+- **E-commerce SEO**: Use customer language and keywords from reviews to optimize your own listings.
 
-Pay per review scraped — you only pay for what you extract. See the Pricing tab for details.
+## 🔒 Pro Tips for Success
 
-$0.003 per review scraped.
+- **Use Residential Proxies**: Amazon has strict anti-scraping. Residential proxies are the most reliable way to ensure uninterrupted data flow.
+- **Start Small**: Run a test with 10-20 reviews to verify the output format before launching large-scale extractions.
 
-## Example — Scrape by URLs
+---
 
-```
-{
-  "productUrls": [
-    "https://www.amazon.com/dp/B0BX2L8PBS",
-    "https://www.amazon.com/dp/B09V3KXJPB"
-  ],
-  "maxReviews": 200,
-  "sortBy": "recent",
-  "filterByRating": "all"
-}
-```
-
-## Example — Scrape by ASINs (Critical Reviews Only)
-
-```
-{
-  "asins": ["B0BX2L8PBS", "B09V3KXJPB"],
-  "maxReviews": 100,
-  "sortBy": "helpful",
-  "filterByRating": "critical",
-  "marketplace": "amazon.com"
-}
-```
-
-## Example — Verified 5-Star Reviews Only
-
-```
-{
-  "productUrls": ["https://www.amazon.com/dp/B0BX2L8PBS"],
-  "maxReviews": 500,
-  "filterByRating": "five_star",
-  "verifiedOnly": true
-}
-```
-
-## Tips
-
-- **Always use residential proxies** — Amazon aggressively blocks datacenter IPs
-- **Start small** — Test with 50-100 reviews before running large jobs
-- **Sort by "recent"** for the latest reviews, "helpful" for the most impactful ones
-- **Combine with Amazon Product Scraper** — search for products first, then deep-dive into reviews
-- Products with 50K+ reviews may take significant time — use maxReviews to limit
-
-## Integration — Python
-
-```
-from apify_client import ApifyClient
-
-client = ApifyClient("YOUR_API_TOKEN")
-run = client.actor("sovereigntaylor/amazon-reviews-scraper").call(run_input={
-    "productUrl": "https://www.amazon.com/dp/B0EXAMPLE",
-    "maxResults": 100
-})
-
-for item in client.dataset(run["defaultDatasetId"]).iterate_items():
-    print(f"{item.get('rating', 0)} stars: {item.get('title', '')}")
-```
-
-## Integration — JavaScript
-
-```
-import { ApifyClient } from 'apify-client';
-const client = new ApifyClient({ token: 'YOUR_API_TOKEN' });
-
-const run = await client.actor('sovereigntaylor/amazon-reviews-scraper').call({
-    productUrl: 'https://www.amazon.com/dp/B0EXAMPLE',
-    maxResults: 100
-});
-
-const { items } = await client.dataset(run.defaultDatasetId).listItems();
-items.forEach(item => console.log(item.title || item.name || 'N/A'));
-```
-
-## Related Actors
-
-- [Amazon Product Scraper](https://apify.com/sovereigntaylor/amazon-product-scraper) — Scrape Amazon product listings and prices
-- [Amazon BSR Tracker](https://apify.com/sovereigntaylor/amazon-bsr-tracker) — Track Best Seller Rank over time
-- [Amazon Keyword Tracker](https://apify.com/sovereigntaylor/amazon-keyword-tracker) — Monitor keyword rankings on Amazon
-- [eBay Scraper](https://apify.com/sovereigntaylor/ebay-scraper) — Compare with eBay marketplace data
-- [Walmart Scraper](https://apify.com/sovereigntaylor/walmart-scraper) — Cross-marketplace price comparison
+*Transform raw reviews into actionable business intelligence. Start scraping now!*
